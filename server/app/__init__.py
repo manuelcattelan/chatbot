@@ -15,8 +15,7 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    @app.route('/api/hello-world')
-    def hello():
-        return 'Hello, World!'
+    from . import messages
+    app.register_blueprint(messages.blueprint)
 
     return app
