@@ -1,6 +1,11 @@
 MINIMUM_MESSAGE_LENGTH = 1
 MAXIMUM_MESSAGE_LENGTH = 1000
 
+ATTACHMENTS_ALLOWED_EXTENSION = "pdf"
+ATTACHMENTS_FOLDER = "./attachments"
+
+MAX_CONTENT_LENGTH = 10 * 1024 * 1024
+
 FACT_CHECKING_SOURCES = [
     "https://craftinginterpreters.com/introduction.html",
     "https://craftinginterpreters.com/a-map-of-the-territory.html",
