@@ -31,9 +31,12 @@ async def get_answer():
             request_attachment = request.files['attachment']
             if request_attachment \
                     and attachments.is_allowed(request_attachment.filename):
-                attachments.save(request_attachment)
+                request_attachment_path = attachments.save(request_attachment)
 
-            return {'answer_id': uuid.uuid4(), 'answer': 'content'}
+                request_answer = attachments.get_content_portion(
+                    request_attachment_path)
+
+                return {'answer_id': uuid.uuid4(), 'answer': request_answer}
 
         request_answer = await cache.get_or_set(
             request_message, "Hello, world! This is a hard-coded answer."
