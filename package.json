@@ -4,9 +4,6 @@
   "scripts": {
     "dev-client": "cd client && npm run dev",
     "dev-server": "cd server && source .venv/bin/activate && flask --app app run --debug",
-    "dev": "concurrently \"npm run dev-client\" \"npm run dev-server\""
-  },
-  "dependencies": {
-    "concurrently": "^9.1.2"
+    "dev": "npm run dev-client & npm run dev-server"
   }
 }
