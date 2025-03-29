@@ -1,9 +1,7 @@
 "use client";
 
-import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import { v4 as uuidv4 } from "uuid";
 
@@ -19,6 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 
 import { ArrowUpIcon } from "@radix-ui/react-icons";
+import { GlobeIcon } from "@radix-ui/react-icons";
 
 import {
   ATTACHMENTS_ALLOWED_FILETYPE,
@@ -30,10 +29,20 @@ import { useRef, useState } from "react";
 import {
   ConversationMessage,
   ConversationMessageOwner,
-} from "@/types/ConversatioMessage";
+} from "@/types/ConversationMessage";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import useAnswer from "@/hooks/useAnswer";
+import useAnswerSources from "@/hooks/useAnswerSources";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
-const FormSchema = z.object({
+const ConversationFormSchema = z.object({
   message: z
     .string()
     .min(MINIMUM_MESSAGE_LENGTH, {
@@ -54,19 +63,16 @@ const FormSchema = z.object({
 });
 
 export default function Home() {
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const conversationRef = useRef<HTMLDivElement>(null);
+  const conversationForm = useForm<z.infer<typeof ConversationFormSchema>>({
+    resolver: zodResolver(ConversationFormSchema),
   });
-  const formMutation = useMutation({
-    mutationFn: (formData: FormData) => {
-      return axios.post("/api/messages", formData);
-    },
-  });
-
   const [conversationMessages, setConversationMessages] = useState<
     ConversationMessage[]
   >([]);
-  const conversationRef = useRef<HTMLDivElement>(null);
+
+  const getAnswer = useAnswer();
+  const getAnswerSources = useAnswerSources();
 
   function scrollToBottom() {
     setTimeout(() => {
@@ -79,25 +85,33 @@ export default function Home() {
     }, 0);
   }
 
-  async function onSubmit(data: z.infer<typeof FormSchema>) {
+  async function onConversationFormSubmit(
+    conversationFormData: z.infer<typeof ConversationFormSchema>,
+  ) {
     setConversationMessages((conversationMessages) => [
       ...conversationMessages,
       {
         id: uuidv4(),
-        message: data.message,
+        message: conversationFormData.message,
         owner: ConversationMessageOwner.User,
       },
     ]);
 
-    const formData = new FormData();
-    formData.append("message", data.message);
-    if (data.attachment) {
-      formData.append("attachment", data.attachment);
+    const conversationFormDataToSubmit = new FormData();
+    conversationFormDataToSubmit.append(
+      "message",
+      conversationFormData.message,
+    );
+    if (conversationFormData.attachment) {
+      conversationFormDataToSubmit.append(
+        "attachment",
+        conversationFormData.attachment,
+      );
     }
 
     scrollToBottom();
 
-    const response = await formMutation.mutateAsync(formData);
+    const response = await getAnswer.mutateAsync(conversationFormDataToSubmit);
     setConversationMessages((conversationMessages) => [
       ...conversationMessages,
       {
@@ -110,30 +124,79 @@ export default function Home() {
     scrollToBottom();
   }
 
+  const [answerSources, setAnswerSources] = useState<string[]>([]);
+
   return (
-    <main className="flex h-full flex-col">
+    <main className="flex h-full flex-col p-4">
       <div role="log" className="h-full overflow-y-hidden">
         <ScrollArea
           className="h-full overflow-y-auto"
           viewport={conversationRef}
         >
           {conversationMessages.map(
-            (conversationMessage, conversationMessageKey) => (
-              <div
-                role="article"
-                aria-live="polite"
-                key={conversationMessageKey}
-              >
-                {conversationMessage.message}
-              </div>
-            ),
+            (conversationMessage, conversationMessageKey) => {
+              async function onClick() {
+                const response = await getAnswerSources(conversationMessage.id);
+                console.log(response);
+                setAnswerSources(response.data.answer_sources);
+              }
+
+              return (
+                <div
+                  role="article"
+                  aria-live="polite"
+                  key={conversationMessageKey}
+                >
+                  {conversationMessage.message}
+                  {conversationMessage.owner ===
+                    ConversationMessageOwner.Application && (
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button onClick={onClick}>
+                          <GlobeIcon />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Fact-checking sources</DialogTitle>
+                          <DialogDescription>
+                            Listed below are references to the sources that
+                            helped produce this automatically generated answer.
+                          </DialogDescription>
+                        </DialogHeader>
+                        {answerSources.length > 0 ? (
+                          <ul className="h-full overflow-y-hidden">
+                            <ScrollArea
+                              className="h-full overflow-y-auto"
+                              viewport={conversationRef}
+                            >
+                              {answerSources.map((source, index) => (
+                                <li key={index}>
+                                  <Button variant="link">
+                                    {index + 1}. {source}
+                                  </Button>
+                                </li>
+                              ))}
+                            </ScrollArea>
+                          </ul>
+                        ) : (
+                          <p>No sources available</p>
+                        )}
+                      </DialogContent>
+                    </Dialog>
+                  )}
+                </div>
+              );
+            },
           )}
         </ScrollArea>
       </div>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+      <Form {...conversationForm}>
+        <form
+          onSubmit={conversationForm.handleSubmit(onConversationFormSubmit)}
+        >
           <FormField
-            control={form.control}
+            control={conversationForm.control}
             name="message"
             render={({ field }) => (
               <FormItem>
@@ -149,7 +212,7 @@ export default function Home() {
             )}
           />
           <FormField
-            control={form.control}
+            control={conversationForm.control}
             name="attachment"
             render={({ field: { value, onChange, ...props } }) => (
               <FormItem>
