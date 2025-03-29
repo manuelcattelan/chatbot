@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
+import { v4 as uuidv4 } from "uuid";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +26,12 @@ import {
   MAXIMUM_MESSAGE_LENGTH,
   MINIMUM_MESSAGE_LENGTH,
 } from "@/lib/constants";
+import { useRef, useState } from "react";
+import {
+  ConversationMessage,
+  ConversationMessageOwner,
+} from "@/types/ConversatioMessage";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const FormSchema = z.object({
   message: z
@@ -56,19 +63,73 @@ export default function Home() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    const formData = new FormData();
+  const [conversationMessages, setConversationMessages] = useState<
+    ConversationMessage[]
+  >([]);
+  const conversationRef = useRef<HTMLDivElement>(null);
 
+  function scrollToBottom() {
+    setTimeout(() => {
+      if (conversationRef !== null && conversationRef.current !== null) {
+        conversationRef.current.scroll({
+          behavior: "smooth",
+          top: conversationRef.current.scrollHeight,
+        });
+      }
+    }, 0);
+  }
+
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    setConversationMessages((conversationMessages) => [
+      ...conversationMessages,
+      {
+        id: uuidv4(),
+        message: data.message,
+        owner: ConversationMessageOwner.User,
+      },
+    ]);
+
+    const formData = new FormData();
     formData.append("message", data.message);
     if (data.attachment) {
       formData.append("attachment", data.attachment);
     }
 
-    formMutation.mutate(formData);
+    scrollToBottom();
+
+    const response = await formMutation.mutateAsync(formData);
+    setConversationMessages((conversationMessages) => [
+      ...conversationMessages,
+      {
+        id: response.data.answer_id,
+        message: response.data.answer,
+        owner: ConversationMessageOwner.Application,
+      },
+    ]);
+
+    scrollToBottom();
   }
 
   return (
-    <main>
+    <main className="flex h-full flex-col">
+      <div role="log" className="h-full overflow-y-hidden">
+        <ScrollArea
+          className="h-full overflow-y-auto"
+          viewport={conversationRef}
+        >
+          {conversationMessages.map(
+            (conversationMessage, conversationMessageKey) => (
+              <div
+                role="article"
+                aria-live="polite"
+                key={conversationMessageKey}
+              >
+                {conversationMessage.message}
+              </div>
+            ),
+          )}
+        </ScrollArea>
+      </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FormField

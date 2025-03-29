@@ -14,7 +14,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <QueryClientProvider client={queryClient}>
-        <body className="h-dvh w-dvw p-4">{children}</body>
+        <body className="h-screen p-4">{children}</body>
       </QueryClientProvider>
     </html>
   );
