@@ -76,7 +76,7 @@ async def get_answer():
             )
         except Exception as e:
             current_app.logger.error(
-                f'Failed to get answer for question {request_message}: '
+                f'Failed to get answer for message `{request_message}`: '
                 f'{str(e)}')
 
             response_status_code = 500
@@ -110,7 +110,7 @@ def get_answer_sources(answer_id):
                 constants.FACT_CHECKING_SOURCES, sources_num)
         except Exception as e:
             current_app.logger.error(
-                f'Failed to get sources for answer {answer_id}: {str(e)}')
+                f'Failed to get sources for answer `{answer_id}`: {str(e)}')
 
             response_status_code = 500
             response_message = 'Failed to get sources for the requested answer.'

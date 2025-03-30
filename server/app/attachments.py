@@ -17,7 +17,7 @@ def is_allowed(attachment_filename):
         return attachment_extension == constants.ATTACHMENTS_ALLOWED_EXTENSION
     except Exception as e:
         raise Exception(
-            f"Failed to verify validity for "
+            f"failed to verify validity for "
             f"attachment `{attachment_filename}`: {str(e)}")
 
 
@@ -33,7 +33,7 @@ def save(attachment):
         return attachment_filepath
     except Exception as e:
         raise Exception(
-            f"Failed to save attachment: {str(e)}")
+            f"failed to save attachment: {str(e)}")
 
 
 def get_content_portion(attachment_path):
@@ -55,4 +55,4 @@ def get_content_portion(attachment_path):
                 portion_start + portion_length]
     except Exception as e:
         raise Exception(
-            f"Failed to get content portion for attachment: {str(e)}")
+            f"failed to get content portion for attachment: {str(e)}")

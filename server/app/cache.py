@@ -18,7 +18,7 @@ class AsynchronousCache:
                 return self._cache.get(key)
         except Exception as e:
             raise Exception(
-                f"Failed to get cached answer for key `{key}`: {str(e)}")
+                f"failed to get cached answer for key `{key}`: {str(e)}")
 
     async def set(self, key, value):
         await asyncio.sleep(2)
@@ -33,9 +33,9 @@ class AsynchronousCache:
                 return value
         except Exception as e:
             raise Exception(
-                f"Failed to set cached answer for "
+                f"failed to set cached answer for "
                 f"key `{key}` and "
-                f"value `{value} : {str(e)}")
+                f"value `{value}` : {str(e)}")
 
     async def get_or_set(self, key, value):
         try:
