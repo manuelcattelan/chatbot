@@ -3,6 +3,7 @@
 import "./globals.css";
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function RootLayout({
   children,
@@ -14,7 +15,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <QueryClientProvider client={queryClient}>
-        <body className="h-screen">{children}</body>
+        <body className="h-screen">
+          {children}
+          <Toaster richColors icons={{ error: null }} />
+        </body>
       </QueryClientProvider>
     </html>
   );

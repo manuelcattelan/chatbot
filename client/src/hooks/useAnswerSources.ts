@@ -1,7 +1,7 @@
 import {
   GetAnswerSourcesRequest,
   GetAnswerSourcesResponse,
-} from "@/types/communication/GetAnswerSouces";
+} from "@/types/communication/GetAnswerSources";
 import { QueryClient } from "@tanstack/react-query";
 import axios from "axios";
 

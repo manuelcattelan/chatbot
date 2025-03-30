@@ -41,6 +41,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Status } from "@/types/communication/Status";
+import {
+  GetAnswerResponseError,
+  GetAnswerResponseSuccess,
+} from "@/types/communication/GetAnswer";
+import { toast } from "sonner";
+import { GetAnswerSourcesResponseError } from "@/types/communication/GetAnswerSources";
 
 const ConversationFormSchema = z.object({
   message: z
@@ -111,17 +118,28 @@ export default function Home() {
 
     scrollToBottom();
 
-    const response = await getAnswer.mutateAsync(conversationFormDataToSubmit);
-    setConversationMessages((conversationMessages) => [
-      ...conversationMessages,
-      {
-        id: response.data.answer_id,
-        message: response.data.answer,
-        owner: ConversationMessageOwner.Application,
-      },
-    ]);
+    try {
+      const response = await getAnswer.mutateAsync(
+        conversationFormDataToSubmit,
+      );
 
-    scrollToBottom();
+      if (response.data.status === Status.Success) {
+        setConversationMessages((conversationMessages) => [
+          ...conversationMessages,
+          {
+            id: (response.data as GetAnswerResponseSuccess).data.answer_id,
+            message: (response.data as GetAnswerResponseSuccess).data.answer,
+            owner: ConversationMessageOwner.Application,
+          },
+        ]);
+
+        scrollToBottom();
+      }
+    } catch (error: any) {
+      toast.error("Uh oh! Something went wrong.", {
+        description: (error.response.data as GetAnswerResponseError).message,
+      });
+    }
   }
 
   const [answerSources, setAnswerSources] = useState<string[]>([]);
@@ -136,9 +154,21 @@ export default function Home() {
           {conversationMessages.map(
             (conversationMessage, conversationMessageKey) => {
               async function onClick() {
-                const response = await getAnswerSources(conversationMessage.id);
-                console.log(response);
-                setAnswerSources(response.data.answer_sources);
+                try {
+                  const response = await getAnswerSources(
+                    conversationMessage.id,
+                  );
+
+                  if (response.data.status === Status.Success) {
+                    setAnswerSources(response.data.data.answer_sources);
+                  }
+                } catch (error: any) {
+                  toast.error("Uh oh, something went wrong.", {
+                    description: (
+                      error.response.data as GetAnswerSourcesResponseError
+                    ).message,
+                  });
+                }
               }
 
               return (
