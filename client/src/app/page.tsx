@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 
 import Conversation from "@/components/custom/Conversation";
-import ConversationForm from "@/components/custom/ConversationForm";
+import ConversationForm from "@/components/custom/ConversationForm/Index";
 
 import { ConversationMessage } from "@/types/ConversationMessage";
 

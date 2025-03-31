@@ -18,8 +18,8 @@
 - [x] Disable form submit while waiting for answer
 - [x] Clear form input and set it to not dirty after submitting
 - [x] Set max height for input
-- [] New UI for form
-- [] Refactor form
+- [x] New UI for form
+- [x] Refactor form
  
 - [] Mobile and desktop versions
 - [x] Split components into separate folders
@@ -27,3 +27,4 @@
 - [] Create dockerfile
 - [] Create docker-compose
 - [] Create kubernetes deployment
+- [] Write README
