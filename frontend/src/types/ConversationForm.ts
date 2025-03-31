@@ -18,7 +18,9 @@ export const ConversationFormSchema = z.object({
       message: `Message must be less than ${MAXIMUM_MESSAGE_LENGTH} characters long`,
     }),
   attachment: z
-    .instanceof(File)
+    // NOTE: I couldn't find a way to build the client with Docker when using
+    // .instanceof(File) for some reason, thus using .any() instead.
+    .any()
     .refine((attachment) => attachment.type === ATTACHMENTS_ALLOWED_FILETYPE, {
       message: `Attachment must be a valid ${ATTACHMENTS_ALLOWED_FILETYPE} document`,
     })

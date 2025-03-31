@@ -19,7 +19,9 @@ export default function ConversationFormError({
       {conversationFromHasErrors && (
         <FormMessage>
           {conversationForm.formState.errors.message?.message ||
-            conversationForm.formState.errors.attachment?.message}
+            // NOTE: casting to string is only required because we used z.any()
+            // to perform validation on the attachment field.
+            (conversationForm.formState.errors.attachment?.message as string)}
         </FormMessage>
       )}
     </div>
