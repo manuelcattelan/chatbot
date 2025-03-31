@@ -1,9 +1,10 @@
+import axios from "axios";
+import { QueryClient } from "@tanstack/react-query";
+
 import {
   GetAnswerSourcesRequest,
   GetAnswerSourcesResponse,
 } from "@/types/communication/GetAnswerSources";
-import { QueryClient } from "@tanstack/react-query";
-import axios from "axios";
 
 async function getAnswerSourcesFn(
   request: GetAnswerSourcesRequest,
@@ -11,9 +12,7 @@ async function getAnswerSourcesFn(
   return axios.get(`/api/messages/${request.answer_id}/sources`);
 }
 
-const useAnswerSources = () => {
-  const queryClient = new QueryClient();
-
+const useAnswerSources = (queryClient: QueryClient) => {
   return (answerId: string) =>
     queryClient.fetchQuery({
       queryKey: ["getAnswerSources", answerId],

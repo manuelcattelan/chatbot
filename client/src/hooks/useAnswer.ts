@@ -1,6 +1,7 @@
-import { GetAnswerResponse } from "@/types/communication/GetAnswer";
-import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
+
+import { GetAnswerResponse } from "@/types/communication/GetAnswer";
 
 async function getAnswerFn(
   conversationFormData: FormData,

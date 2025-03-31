@@ -19,6 +19,9 @@ async def get_answer():
 
         if (request_message is None
                 or not isinstance(request_message, str)):
+            current_app.logger.error(
+                'validation error: message is required and must be a string')
+
             response_status_code = 400
             response_message = 'Message is required and must be a string.\n'
             return {
@@ -29,6 +32,9 @@ async def get_answer():
 
         if (len(request_message) < constants.MINIMUM_MESSAGE_LENGTH
                 or len(request_message) > constants.MAXIMUM_MESSAGE_LENGTH):
+            current_app.logger.error(
+                'validation error: message length out of bounds')
+
             response_status_code = 400
             response_message = (f'Message length must be between '
                                 f'{constants.MINIMUM_MESSAGE_LENGTH} and '
@@ -60,7 +66,7 @@ async def get_answer():
                     }
             except Exception as e:
                 current_app.logger.error(
-                    f'Failed to get content portion for attachment: {str(e)}')
+                    f'failed to get content portion for attachment: {str(e)}')
 
                 response_status_code = 500
                 response_message = 'Failed to get content portion for attachment.'
@@ -76,7 +82,7 @@ async def get_answer():
             )
         except Exception as e:
             current_app.logger.error(
-                f'Failed to get answer for message `{request_message}`: '
+                f'failed to get answer for message `{request_message}`: '
                 f'{str(e)}')
 
             response_status_code = 500
@@ -110,7 +116,7 @@ def get_answer_sources(answer_id):
                 constants.FACT_CHECKING_SOURCES, sources_num)
         except Exception as e:
             current_app.logger.error(
-                f'Failed to get sources for answer `{answer_id}`: {str(e)}')
+                f'failed to get sources for answer `{answer_id}`: {str(e)}')
 
             response_status_code = 500
             response_message = 'Failed to get sources for the requested answer.'
