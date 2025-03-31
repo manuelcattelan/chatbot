@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 
-import { Form, FormMessage } from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import ConversationFormTextInput from "@/components/custom/ConversationForm/TextInput";
 import ConversationFormSubmitButton from "@/components/custom/ConversationForm/SubmitButton";
 
