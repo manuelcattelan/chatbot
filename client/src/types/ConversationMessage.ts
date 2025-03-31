@@ -3,8 +3,19 @@ export enum ConversationMessageOwner {
   Application = "application",
 }
 
-export type ConversationMessage = {
+export type ConversationMessageUser = {
   id: string;
+  owner: ConversationMessageOwner.User;
   message: string;
-  owner: ConversationMessageOwner;
 };
+
+export type ConversationMessageApplication = {
+  id?: string;
+  owner: ConversationMessageOwner.Application;
+  message?: string;
+  isLoading: boolean;
+};
+
+export type ConversationMessage =
+  | ConversationMessageUser
+  | ConversationMessageApplication;

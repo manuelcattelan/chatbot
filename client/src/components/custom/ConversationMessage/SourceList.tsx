@@ -1,7 +1,7 @@
 import { RefObject } from "react";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
-import ConversationMessageSource from "@/components/custom/ConversationMessageSource";
+import ConversationMessageSource from "@/components/custom/ConversationMessage/Source";
 
 export default function ConversationMessageSourceList({
   dialogRef,

@@ -1,11 +1,11 @@
 import { RefObject, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
-import ConversationMessage from "@/components/custom/ConversationMessage";
+import ConversationMessage from "@/components/custom/ConversationMessage/Index";
 
 import useAnswerSources from "@/hooks/useAnswerSources";
 import { ConversationMessage as ConversationMessageType } from "@/types/ConversationMessage";
-import { useQueryClient } from "@tanstack/react-query";
 
 export default function Conversation({
   conversationRef,

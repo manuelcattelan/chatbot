@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import ConversationMessageSourceList from "@/components/custom/ConversationMessageSourceList";
+import ConversationMessageSourceList from "@/components/custom/ConversationMessage/SourceList";
 
 export default function ConversationMessageDialog({
   isSourcesDialogOpen,

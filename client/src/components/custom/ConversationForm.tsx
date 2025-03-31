@@ -18,6 +18,7 @@ import {
 } from "@/lib/constants";
 import {
   ConversationMessage,
+  ConversationMessageApplication,
   ConversationMessageOwner,
 } from "@/types/ConversationMessage";
 import {
@@ -26,8 +27,9 @@ import {
 } from "@/types/communication/GetAnswer";
 import { Status } from "@/types/communication/Status";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowUpIcon } from "lucide-react";
-import { Dispatch, RefObject, SetStateAction } from "react";
+import { useIsMutating } from "@tanstack/react-query";
+import { ArrowUpIcon, Loader2 } from "lucide-react";
+import { Dispatch, RefObject, SetStateAction, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
@@ -63,8 +65,10 @@ export default function ConversationForm({
   const conversationForm = useForm<z.infer<typeof ConversationFormSchema>>({
     resolver: zodResolver(ConversationFormSchema),
   });
-
   const getAnswer = useAnswer();
+  const isSubmittingQuestion = Boolean(
+    useIsMutating({ mutationKey: ["getAnswer"] }),
+  );
 
   function scrollToBottom() {
     setTimeout(() => {
@@ -77,15 +81,31 @@ export default function ConversationForm({
     }, 0);
   }
 
+  function onKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      conversationForm.handleSubmit(onConversationFormSubmit)();
+    }
+  }
+
   async function onConversationFormSubmit(
     conversationFormData: z.infer<typeof ConversationFormSchema>,
   ) {
+    conversationForm.reset({
+      message: "",
+      attachment: undefined,
+    });
+
     setConversationMessages((conversationMessages) => [
       ...conversationMessages,
       {
         id: uuidv4(),
-        message: conversationFormData.message,
         owner: ConversationMessageOwner.User,
+        message: conversationFormData.message,
+      },
+      {
+        owner: ConversationMessageOwner.Application,
+        isLoading: true,
       },
     ]);
 
@@ -109,14 +129,21 @@ export default function ConversationForm({
       );
 
       if (response.data.status === Status.Success) {
-        setConversationMessages((conversationMessages) => [
-          ...conversationMessages,
-          {
-            id: (response.data as GetAnswerResponseSuccess).data.answer_id,
-            message: (response.data as GetAnswerResponseSuccess).data.answer,
-            owner: ConversationMessageOwner.Application,
-          },
-        ]);
+        setConversationMessages((conversationMessages) => {
+          const updatedConversationMessages = [...conversationMessages];
+          const lastConversationMessage = updatedConversationMessages.pop();
+
+          if (lastConversationMessage) {
+            updatedConversationMessages.push({
+              ...lastConversationMessage,
+              id: (response.data as GetAnswerResponseSuccess).data.answer_id,
+              message: (response.data as GetAnswerResponseSuccess).data.answer,
+              isLoading: false,
+            } as ConversationMessageApplication);
+          }
+
+          return updatedConversationMessages;
+        });
 
         scrollToBottom();
       }
@@ -141,8 +168,9 @@ export default function ConversationForm({
             <FormItem>
               <FormControl>
                 <Textarea
+                  onKeyDown={onKeyDown}
                   placeholder="Type your message here..."
-                  className="resize-none"
+                  className="max-h-16 resize-none"
                   {...field}
                 />
               </FormControl>
@@ -170,8 +198,12 @@ export default function ConversationForm({
             </FormItem>
           )}
         />
-        <Button type="submit">
-          <ArrowUpIcon />
+        <Button type="submit" disabled={isSubmittingQuestion}>
+          {isSubmittingQuestion ? (
+            <Loader2 className="animate-spin" />
+          ) : (
+            <ArrowUpIcon />
+          )}
         </Button>
       </form>
     </Form>
