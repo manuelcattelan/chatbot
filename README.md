@@ -21,7 +21,7 @@
 - [x] New UI for form
 - [x] Refactor form
  
-- [] Mobile and desktop versions
+- [x] Mobile and desktop versions
 - [x] Split components into separate folders
 
 - [] Create dockerfile

@@ -18,6 +18,7 @@ export default function ConversationMessageSourceButton({
   answerSources,
   setAnswerSources,
   getAnswerSources,
+  shouldShowSourcesButton,
 }: {
   message: ConversationMessage;
   answerSources: string[];
@@ -25,6 +26,7 @@ export default function ConversationMessageSourceButton({
   getAnswerSources: (
     answerId: string,
   ) => Promise<{ data: GetAnswerSourcesResponse }>;
+  shouldShowSourcesButton: boolean;
 }) {
   const [isSourcesDialogOpen, setIsSourcesDialogOpen] = useState(false);
   const isFetchingAnswerSources = Boolean(
@@ -32,6 +34,14 @@ export default function ConversationMessageSourceButton({
       queryKey: ["getAnswerSources", message.id],
     }),
   );
+
+  function getSourcesButtonClass() {
+    const defaultClasses = ["transition-opacity duration-150 ease-in-out"];
+    if (!shouldShowSourcesButton) {
+      defaultClasses.push("opacity-0");
+    }
+    return defaultClasses.join(" ");
+  }
 
   async function onClick() {
     try {
@@ -49,11 +59,12 @@ export default function ConversationMessageSourceButton({
   }
 
   return (
-    <div>
+    <div className="h-9 self-start">
       <Button
         disabled={isFetchingAnswerSources}
         onClick={onClick}
         variant="ghost"
+        className={getSourcesButtonClass()}
       >
         {isFetchingAnswerSources ? (
           <Loader2 className="animate-spin" />

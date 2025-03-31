@@ -14,7 +14,7 @@ export default function Home() {
   >([]);
 
   return (
-    <main className="flex h-full flex-col p-4">
+    <main className="flex h-full flex-col p-4 lg:mx-auto lg:max-w-3xl">
       <Conversation
         conversationRef={conversationRef}
         conversationMessages={conversationMessages}

@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import ConversationMessageOwner from "@/components/custom/ConversationMessage/Owner";
@@ -24,17 +24,32 @@ export default function ConversationMessage({
     answerId: string,
   ) => Promise<{ data: GetAnswerSourcesResponse }>;
 }) {
+  const [showSourceButton, setShowSourceButton] = useState(false);
+
+  function getConversationMessageWrapperClass() {
+    const defaultClasses = ["flex flex-col"];
+    if (message.owner === ConversationMessageOwnerEnum.User) {
+      defaultClasses.push("pb-9");
+    }
+    return defaultClasses.join(" ");
+  }
+
   const messageTextAlignment =
     message.owner === ConversationMessageOwnerEnum.Application
-      ? "self-start"
-      : "self-end";
+      ? "self-start mr-auto"
+      : "self-end ml-auto";
+
+  const shouldShowSourcesButton =
+    showSourceButton &&
+    message.id !== undefined &&
+    message.owner === ConversationMessageOwnerEnum.Application;
 
   return (
     <div
       role="article"
       aria-labelledby={`message-owner-${message.id}`}
       aria-live="polite"
-      className="flex flex-col pb-4"
+      className={getConversationMessageWrapperClass()}
     >
       {message.owner === ConversationMessageOwnerEnum.Application &&
       message.isLoading ? (
@@ -45,7 +60,11 @@ export default function ConversationMessage({
           messageTextAlignment={messageTextAlignment}
         />
       )}
-      <div className={`${messageTextAlignment} flex items-center gap-1`}>
+      <div
+        className={`${messageTextAlignment} flex flex-col items-center gap-1 md:max-w-4/5`}
+        onMouseEnter={() => setShowSourceButton(true)}
+        onMouseLeave={() => setShowSourceButton(false)}
+      >
         {message.owner === ConversationMessageOwnerEnum.Application &&
         message.isLoading ? (
           <Skeleton className="h-[38px] w-[292px] rounded-sm" />
@@ -59,6 +78,7 @@ export default function ConversationMessage({
               answerSources={answerSources}
               setAnswerSources={setAnswerSources}
               getAnswerSources={getAnswerSources}
+              shouldShowSourcesButton={shouldShowSourcesButton}
             />
           )}
       </div>
