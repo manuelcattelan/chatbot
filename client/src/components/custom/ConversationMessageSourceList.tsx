@@ -11,7 +11,7 @@ export default function ConversationMessageSourceList({
   answerSources: string[];
 }) {
   return (
-    <ul className="h-full overflow-y-hidden">
+    <ul className="max-h-[40vh] overflow-y-hidden">
       <ScrollArea className="h-full overflow-y-auto" viewport={dialogRef}>
         {answerSources.map((source, sourceIndex) => (
           <ConversationMessageSource

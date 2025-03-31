@@ -22,7 +22,7 @@ export default function ConversationMessageDialog({
 
   return (
     <Dialog open={isSourcesDialogOpen} onOpenChange={setIsSourcesDialogOpen}>
-      <DialogContent>
+      <DialogContent className="max-h-full">
         <DialogHeader>
           <DialogTitle>Fact-checking sources</DialogTitle>
           <DialogDescription>
@@ -36,7 +36,13 @@ export default function ConversationMessageDialog({
             answerSources={answerSources}
           />
         ) : (
-          <p>No sources available</p>
+          <p className="text-sm">
+            Unfortunately, we weren't able to retrieve any source for this
+            particular answer. This could be due to a variety of reasons,
+            including the nature of the question or the limitations of our data
+            sources. We appreciate your understanding and encourage you to ask
+            another question or provide more context for better results.
+          </p>
         )}
       </DialogContent>
     </Dialog>
