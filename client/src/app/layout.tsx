@@ -17,7 +17,7 @@ export default function RootLayout({
       <QueryClientProvider client={queryClient}>
         <body className="h-screen">
           {children}
-          <Toaster richColors icons={{ error: null }} />
+          <Toaster richColors icons={{ success: null, error: null }} />
         </body>
       </QueryClientProvider>
     </html>

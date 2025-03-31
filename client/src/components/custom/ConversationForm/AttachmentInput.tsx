@@ -1,4 +1,5 @@
-import { useRef } from "react";
+import { ChangeEvent, useRef } from "react";
+import { toast } from "sonner";
 import { PaperclipIcon, X } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
@@ -22,6 +23,15 @@ export default function ConversationFormAttachmentInput({
   conversationForm: UseFormReturn<z.infer<typeof ConversationFormSchema>>;
 }) {
   const attachmentInputRef = useRef<HTMLInputElement>(null);
+  const handleAttachmentChange = (
+    event: ChangeEvent<HTMLInputElement>,
+    onChange: (...event: any[]) => void,
+  ) => {
+    onChange(event.target.files && event.target.files[0]);
+    toast.success("Hooray!", {
+      description: "File uploaded successfully!",
+    });
+  };
   const handleAttachmentUploadButtonClick = () => {
     attachmentInputRef.current?.click();
   };
@@ -30,6 +40,9 @@ export default function ConversationFormAttachmentInput({
     if (attachmentInputRef.current) {
       attachmentInputRef.current.value = "";
     }
+    toast.success("Hooray!", {
+      description: "File removed successfully!",
+    });
   };
 
   return (
@@ -47,9 +60,7 @@ export default function ConversationFormAttachmentInput({
                 ref={attachmentInputRef}
                 className="hidden"
                 accept={ATTACHMENTS_ALLOWED_FILETYPE}
-                onChange={(event) =>
-                  onChange(event.target.files && event.target.files[0])
-                }
+                onChange={(event) => handleAttachmentChange(event, onChange)}
               />
               <TooltipProvider>
                 <Tooltip>
