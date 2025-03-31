@@ -51,15 +51,10 @@ export default function ConversationMessage({
       aria-live="polite"
       className={getConversationMessageWrapperClass()}
     >
-      {message.owner === ConversationMessageOwnerEnum.Application &&
-      message.isLoading ? (
-        <Skeleton className="mb-1 h-4 w-16 rounded-sm" />
-      ) : (
-        <ConversationMessageOwner
-          message={message}
-          messageTextAlignment={messageTextAlignment}
-        />
-      )}
+      <ConversationMessageOwner
+        message={message}
+        messageTextAlignment={messageTextAlignment}
+      />
       <div
         className={`${messageTextAlignment} flex flex-col items-center gap-1 md:max-w-4/5`}
         onMouseEnter={() => setShowSourceButton(true)}

@@ -2,8 +2,8 @@
   "name": "application",
   "version": "1.0.0",
   "scripts": {
-    "dev-client": "cd client && pnpm run dev",
-    "dev-server": "cd server && source .venv/bin/activate && flask --app app run --debug",
-    "dev": "pnpm run dev-client & pnpm run dev-server"
+    "dev-frontend": "cd frontend && pnpm run dev",
+    "dev-backend": "cd backend && source .venv/bin/activate && flask --app app run --debug",
+    "dev": "pnpm run dev-frontend & pnpm run dev-backend"
   }
 }
