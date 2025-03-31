@@ -18,7 +18,7 @@ export default function Conversation({
   const getAnswerSources = useAnswerSources(useQueryClient());
 
   return (
-    <div role="log" className="h-full overflow-y-hidden">
+    <div role="log" className="h-full overflow-y-hidden pb-2">
       <ScrollArea className="h-full overflow-y-auto" viewport={conversationRef}>
         {conversationMessages.map(
           (conversationMessage, conversationMessageKey) => (

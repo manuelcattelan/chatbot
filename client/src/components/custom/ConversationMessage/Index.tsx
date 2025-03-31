@@ -67,7 +67,7 @@ export default function ConversationMessage({
       >
         {message.owner === ConversationMessageOwnerEnum.Application &&
         message.isLoading ? (
-          <Skeleton className="h-[38px] w-[292px] rounded-sm" />
+          <Skeleton className="mb-10 h-[38px] w-[292px] rounded-sm" />
         ) : (
           <ConversationMessageText message={message} />
         )}
