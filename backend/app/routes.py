@@ -12,7 +12,7 @@ blueprint = Blueprint('messages', __name__, url_prefix='/api/messages')
 cache = cache.AsynchronousCache()
 
 
-@blueprint.route('/', methods=['POST'])
+@blueprint.route('', methods=['POST'])
 async def get_answer():
     if request.method == 'POST':
         request_message = request.form.get('message')
