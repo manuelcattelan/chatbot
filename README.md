@@ -20,7 +20,7 @@ Make sure you have either [Docker Desktop](https://docs.docker.com/get-docker) (
 ### With Kind and Kubernetes
 Make sure you have [Kubernetes](https://kubernetes.io/releases/download/) (`kubectl` is required), [kind](https://kind.sigs.k8s.io/) and either [Docker Engine](https://docs.docker.com/engine/) or [Docker Desktop](https://docs.docker.com/get-docker) installed and working on your system. Allowing Docker to be managed as a non-root user may also be necessary depending on how you installed it. See [here](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user).
 ## How to run
-There are multiple ways for running the project on your machine:
+There are multiple ways for running the project on your machine (the ones provided below were tested against a Linux machine):
 ### Development
 From the root directory, create and activate a virtual environment inside the backend application:
 ```bash
