@@ -24,8 +24,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-ARG API_BASE_URL
-ENV API_BASE_URL=${API_BASE_URL}
+ENV API_BASE_URL=http://backend:5000
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry

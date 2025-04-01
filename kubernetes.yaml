@@ -18,9 +18,6 @@ spec:
           imagePullPolicy: Never
           ports:
             - containerPort: 3000
-          env:
-            - name: API_BASE_URL
-              value: http://backend:5000
 ---
 apiVersion: apps/v1
 kind: Deployment
