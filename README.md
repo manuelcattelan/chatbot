@@ -1,4 +1,4 @@
-# application
+# chatbot
 The project is managed as a monorepo with the following structure:
 ```
 .
